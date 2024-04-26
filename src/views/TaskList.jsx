@@ -1,17 +1,12 @@
-
 import React from 'react';
-import {SafeAreaView,Text} from 'react-native';
+import {SafeAreaView, Text} from 'react-native';
 
-import {styles} from './styles/styleApp';
+import {styles} from '../styles/styleTaskList';
 
-
-function App() {
-  
+export default props => {
   return (
     <SafeAreaView style={styles.container}>
       <Text>Hello World</Text>
     </SafeAreaView>
   );
-}
-
-export default App;
+};
