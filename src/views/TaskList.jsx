@@ -7,6 +7,7 @@ import {
   ImageBackground,
   FlatList,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -72,9 +73,31 @@ export default props => {
     setTasks(newTasks);
   };
 
+  const addTask = newTask => {
+    if (!newTask.desc || !newTask.desc.trim()) {
+      console.warn(newTask.desc, newTask.desc.trim() === '');
+      Alert.alert('Invalid Data', 'Description is required.');
+      return;
+    }
+    const newTasks = [...tasks];
+    newTasks.push({
+      id: Math.random(),
+      desc: newTask.desc,
+      estimateAt: newTask.date,
+      doneAt: null,
+    });
+
+    setTasks(newTasks);
+    setShowAddTask(false);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <AddTask isVisible={showAddTask} onCancel={() => setShowAddTask(false)} />
+      <AddTask
+        isVisible={showAddTask}
+        onCancel={() => setShowAddTask(false)}
+        onSave={addTask}
+      />
       <ImageBackground source={todayImage} style={styles.background}>
         <View style={styles.iconBar}>
           <TouchableOpacity onPress={toggleShowDone}>

@@ -19,7 +19,7 @@ export default props => {
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  getDatePicker = () => {
+  const getDatePicker = () => {
     let datePicker = (
       <DateTimePicker
         value={date}
@@ -39,12 +39,21 @@ export default props => {
           <TouchableOpacity onPress={() => setShowDatePicker(true)}>
             <Text style={styles.date}>{dateString}</Text>
           </TouchableOpacity>
-          {showDatePicker && datePicker}
+          {showDatePicker ? datePicker : false}
         </View>
       );
     }
 
     return datePicker;
+  };
+
+  const saveTask = () => {
+    const newTask = {desc, date};
+
+    props.onSave ? props.onSave(newTask) : false;
+
+    setDesc('');
+    setDate(new Date());
   };
 
   return (
@@ -71,7 +80,7 @@ export default props => {
           <TouchableOpacity onPress={props.onCancel}>
             <Text style={styles.button}>Cancel</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={props.onAdd}>
+          <TouchableOpacity onPress={saveTask}>
             <Text style={styles.button}>Save</Text>
           </TouchableOpacity>
         </View>
