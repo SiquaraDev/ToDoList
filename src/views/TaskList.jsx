@@ -91,6 +91,11 @@ export default props => {
     setShowAddTask(false);
   };
 
+  const deleteTask = id => {
+    const newTasks = tasks.filter(task => task.id !== id);
+    setTasks(newTasks);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <AddTask
@@ -117,7 +122,9 @@ export default props => {
         <FlatList
           data={visibleTasks}
           keyExtractor={item => `${item.id}`}
-          renderItem={({item}) => <Task {...item} toggleTask={toggleTask} />}
+          renderItem={({item}) => (
+            <Task {...item} onToggleTask={toggleTask} onDelete={deleteTask} />
+          )}
         />
       </View>
       <TouchableOpacity

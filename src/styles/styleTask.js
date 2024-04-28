@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     alignItems: 'center',
     paddingVertical: 10,
+    backgroundColor: '#FFF',
   },
   checkContainer: {
     width: '20%',
@@ -40,5 +41,29 @@ export const styles = StyleSheet.create({
     fontFamily: commonStyles.fontFamily,
     color: commonStyles.colors.subText,
     fontSize: 12,
+  },
+  deleteButtonRight: {
+    backgroundColor: 'red',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  deleteButtonLeft: {
+    flex: 1,
+    backgroundColor: 'red',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  deleteText: {
+    color: '#FFF',
+    fontFamily: commonStyles.fontFamily,
+    fontSize: 20,
+    margin: 10,
+  },
+  deleteIcon: {
+    marginLeft: 10,
   },
 });
