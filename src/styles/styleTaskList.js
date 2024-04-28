@@ -28,4 +28,10 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     color: cs.colors.secondary,
   },
+  iconBar: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    justifyContent: 'flex-end',
+    marginTop: 10,
+  },
 });
