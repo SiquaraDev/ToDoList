@@ -34,4 +34,15 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginTop: 10,
   },
+  addButton: {
+    position: 'absolute',
+    bottom: 30,
+    right: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: cs.colors.today,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

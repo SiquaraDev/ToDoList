@@ -17,6 +17,7 @@ import commonStyles from '../styles/commonStyles';
 import todayImage from '../assets/images/today.jpg';
 
 import Task from '../components/Task';
+import AddTask from './AddTask';
 
 const initialTasks = [
   {
@@ -39,6 +40,7 @@ export default props => {
   const [tasks, setTasks] = useState(initialTasks);
   const [showDone, setShowDone] = useState(true);
   const [visibleTasks, setVisibleTasks] = useState([]);
+  const [showAddTask, setShowAddTask] = useState(false);
 
   useEffect(() => {
     filterTasks();
@@ -72,6 +74,7 @@ export default props => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <AddTask isVisible={showAddTask} onCancel={() => setShowAddTask(false)} />
       <ImageBackground source={todayImage} style={styles.background}>
         <View style={styles.iconBar}>
           <TouchableOpacity onPress={toggleShowDone}>
@@ -94,6 +97,12 @@ export default props => {
           renderItem={({item}) => <Task {...item} toggleTask={toggleTask} />}
         />
       </View>
+      <TouchableOpacity
+        style={styles.addButton}
+        activeOpacity={0.7}
+        onPress={() => setShowAddTask(true)}>
+        <Icon name="plus" size={20} color={commonStyles.colors.secondary} />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
