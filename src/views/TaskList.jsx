@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {styles} from '../styles/styleTaskList';
 import commonStyles from '../styles/commonStyles';
@@ -20,38 +21,31 @@ import todayImage from '../assets/images/today.jpg';
 import Task from '../components/Task';
 import AddTask from './AddTask';
 
-const initialTasks = [
-  {
-    id: Math.random(),
-    desc: 'Buy a book',
-    estimateAt: new Date(),
-    doneAt: new Date(),
-  },
-  {
-    id: Math.random(),
-    desc: 'Read a book',
-    estimateAt: new Date(),
-    doneAt: null,
-  },
-];
-
 export default props => {
-  const today = moment().format('dddd, MMM Do');
-
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState([]);
   const [showDone, setShowDone] = useState(true);
   const [visibleTasks, setVisibleTasks] = useState([]);
   const [showAddTask, setShowAddTask] = useState(false);
 
   useEffect(() => {
+    getTasks();
+  }, []);
+
+  useEffect(() => {
     filterTasks();
   }, [showDone, tasks]);
+
+  const getTasks = async () => {
+    const loadedTasksString = await AsyncStorage.getItem('tasks');
+    const loadedTasks = JSON.parse(loadedTasksString) || [];
+    setTasks(loadedTasks);
+  };
 
   const toggleShowDone = () => {
     setShowDone(!showDone);
   };
 
-  const filterTasks = () => {
+  const filterTasks = async () => {
     let visibleTasks = null;
     if (showDone) {
       visibleTasks = [...tasks];
@@ -61,6 +55,7 @@ export default props => {
     }
 
     setVisibleTasks(visibleTasks);
+    await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
   };
 
   const toggleTask = id => {
@@ -75,7 +70,6 @@ export default props => {
 
   const addTask = newTask => {
     if (!newTask.desc || !newTask.desc.trim()) {
-      console.warn(newTask.desc, newTask.desc.trim() === '');
       Alert.alert('Invalid Data', 'Description is required.');
       return;
     }
@@ -95,6 +89,8 @@ export default props => {
     const newTasks = tasks.filter(task => task.id !== id);
     setTasks(newTasks);
   };
+
+  const today = moment().format('dddd, MMM Do');
 
   return (
     <SafeAreaView style={styles.container}>
