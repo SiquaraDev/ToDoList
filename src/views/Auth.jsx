@@ -1,33 +1,93 @@
 import React from 'react';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {
   ImageBackground,
   Text,
   SafeAreaView,
   View,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import axios from 'axios';
 
 import backgroundImage from '../assets/images/login.jpg';
 import {styles} from '../styles/styleAuth';
 
+import {server, showError, showSuccess} from '../server/commonServer';
+
 import AuthInput from '../components/AuthInput';
 
 export default props => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isRegister, setIsRegister] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [validForm, setValidForm] = useState(false);
+
+  useEffect(() => {
+    const validations = [];
+
+    validations.push(email && email.includes('@'));
+    validations.push(password && password.length >= 6);
+    if (isRegister) {
+      validations.push(name && name.trim().length >= 3);
+      validations.push(confirmPassword && confirmPassword === password);
+    }
+    const isValid = validations.reduce((t, a) => t && a);
+    setValidForm(isValid);
+  }, [name, email, password, confirmPassword, isRegister]);
+
+  const resetData = () => {
+    setName('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    setIsRegister(false);
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  };
+
+  const signUp = async () => {
+    try {
+      await axios.post(`${server}/signup`, {
+        name: name,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+      });
+      showSuccess('Account created.');
+      resetData();
+    } catch (e) {
+      showError(e);
+    }
+  };
+
+  const signIn = async () => {
+    try {
+      const res = await axios.post(`${server}/signin`, {
+        email: email,
+        password: password,
+      });
+
+      axios.defaults.headers.common[
+        'authorization'
+      ] = `bearer ${res.data.token}`;
+
+      props.navigation.navigate('Home');
+      showSuccess('Access granted.');
+      resetData();
+    } catch (e) {
+      showError(e);
+    }
+  };
+
   const onSignInOrUp = () => {
-    const msg = isRegister ? 'Account created.' : 'Logged in.';
-    Alert.alert('Success!', msg);
+    isRegister ? signUp() : signIn();
   };
 
   return (
@@ -91,7 +151,8 @@ export default props => {
             </View>
           ) : null}
           <TouchableOpacity
-            style={styles.button}
+            disabled={!validForm}
+            style={[styles.button, validForm ? {} : {backgroundColor: '#AAA'}]}
             activeOpacity={0.7}
             onPress={onSignInOrUp}>
             <Text style={styles.buttonText}>
