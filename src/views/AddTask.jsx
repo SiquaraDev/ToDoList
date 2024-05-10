@@ -24,8 +24,8 @@ export default props => {
       <DateTimePicker
         value={date}
         mode="date"
-        onChange={(_, date) => {
-          setDate(date);
+        onChange={(_, newDate) => {
+          setDate(newDate);
           setShowDatePicker(false);
         }}
       />
@@ -48,7 +48,7 @@ export default props => {
   };
 
   const saveTask = () => {
-    const newTask = {desc, date};
+    const newTask = {desc: desc, date: date};
 
     props.onSave ? props.onSave(newTask) : false;
 
