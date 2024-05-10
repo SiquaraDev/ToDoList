@@ -12,6 +12,8 @@ import {
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import {server, showError} from '../server/commonServer';
 
 import {styles} from '../styles/styleTaskList';
 import commonStyles from '../styles/commonStyles';
@@ -28,21 +30,32 @@ export default props => {
   const [showAddTask, setShowAddTask] = useState(false);
 
   useEffect(() => {
-    getTasks();
+    getShowDone();
+    loadTasks();
   }, []);
 
   useEffect(() => {
     filterTasks();
   }, [showDone, tasks]);
 
-  const getTasks = async () => {
-    const loadedTasksString = await AsyncStorage.getItem('tasks');
-    const loadedTasks = JSON.parse(loadedTasksString) || [];
-    setTasks(loadedTasks);
+  const getShowDone = async () => {
+    const stateString = await AsyncStorage.getItem('tasksState');
+    const savedState = JSON.parse(stateString) || true;
+    setShowDone(savedState.showDoneTasks);
   };
 
   const toggleShowDone = () => {
     setShowDone(!showDone);
+  };
+
+  const loadTasks = async () => {
+    try {
+      const maxDate = moment().format('YYYY-MM-DD 23:59:59');
+      const res = await axios.get(`${server}/tasks?date=${maxDate}`);
+      setTasks(res.data);
+    } catch (e) {
+      showError(e);
+    }
   };
 
   const filterTasks = async () => {
@@ -55,39 +68,49 @@ export default props => {
     }
 
     setVisibleTasks(visibleTasks);
-    await AsyncStorage.setItem('tasks', JSON.stringify(tasks));
+    await AsyncStorage.setItem(
+      'tasksState',
+      JSON.stringify({
+        showDoneTasks: showDone,
+      }),
+    );
   };
 
-  const toggleTask = id => {
-    const newTasks = tasks.map(task => {
-      if (task.id === id) {
-        task.doneAt = task.doneAt ? null : new Date();
-      }
-      return task;
-    });
-    setTasks(newTasks);
+  const toggleTask = async taskId => {
+    try {
+      await axios.put(`${server}/tasks/${taskId}/toggle`);
+      loadTasks();
+    } catch (e) {
+      showError(e);
+    }
   };
 
-  const addTask = newTask => {
+  const addTask = async newTask => {
     if (!newTask.desc || !newTask.desc.trim()) {
       Alert.alert('Invalid Data', 'Description is required.');
       return;
     }
-    const newTasks = [...tasks];
-    newTasks.push({
-      id: Math.random(),
-      desc: newTask.desc,
-      estimateAt: newTask.date,
-      doneAt: null,
-    });
 
-    setTasks(newTasks);
-    setShowAddTask(false);
+    try {
+      await axios.post(`${server}/tasks`, {
+        desc: newTask.desc,
+        estimateAt: newTask.date,
+      });
+
+      setShowAddTask(false);
+      loadTasks();
+    } catch (e) {
+      showError(e);
+    }
   };
 
-  const deleteTask = id => {
-    const newTasks = tasks.filter(task => task.id !== id);
-    setTasks(newTasks);
+  const deleteTask = async taskId => {
+    try {
+      await axios.delete(`${server}/tasks/${taskId}`);
+      loadTasks();
+    } catch (e) {
+      showError(e);
+    }
   };
 
   const today = moment().format('dddd, MMM Do');
