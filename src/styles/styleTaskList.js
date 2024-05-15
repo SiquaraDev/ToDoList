@@ -30,8 +30,8 @@ export const styles = StyleSheet.create({
   },
   iconBar: {
     flexDirection: 'row',
-    marginHorizontal: 20,
-    justifyContent: 'flex-end',
+    marginHorizontal: 10,
+    justifyContent: 'space-between',
     marginTop: 10,
   },
   addButton: {

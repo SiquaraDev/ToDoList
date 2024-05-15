@@ -50,7 +50,9 @@ export default props => {
 
   const loadTasks = async () => {
     try {
-      const maxDate = moment().format('YYYY-MM-DD 23:59:59');
+      const maxDate = moment()
+        .add({days: props.route.params.daysAhead})
+        .format('YYYY-MM-DD 23:59:59');
       const res = await axios.get(`${server}/tasks?date=${maxDate}`);
       setTasks(res.data);
     } catch (e) {
@@ -124,6 +126,9 @@ export default props => {
       />
       <ImageBackground source={todayImage} style={styles.background}>
         <View style={styles.iconBar}>
+          <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+            <Icon name="bars" size={20} color={commonStyles.colors.secondary} />
+          </TouchableOpacity>
           <TouchableOpacity onPress={toggleShowDone}>
             <Icon
               name={showDone ? 'eye' : 'eye-slash'}
@@ -133,7 +138,7 @@ export default props => {
           </TouchableOpacity>
         </View>
         <View style={styles.titleBar}>
-          <Text style={styles.title}>Today</Text>
+          <Text style={styles.title}>{props.route.params.title}</Text>
           <Text style={styles.subtitle}>{today}</Text>
         </View>
       </ImageBackground>
