@@ -9,7 +9,11 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,6 +32,9 @@ import Task from '../components/Task';
 import AddTask from './AddTask';
 
 export default props => {
+  const navigation = useNavigation();
+  const route = useRoute();
+
   const [tasks, setTasks] = useState([]);
   const [showDone, setShowDone] = useState(true);
   const [visibleTasks, setVisibleTasks] = useState([]);
@@ -57,7 +64,7 @@ export default props => {
   const loadTasks = async () => {
     try {
       const maxDate = moment()
-        .add({days: props.route.params.daysAhead})
+        .add({days: route.params.daysAhead})
         .format('YYYY-MM-DD 23:59:59');
       const res = await axios.get(`${server}/tasks?date=${maxDate}`);
       setTasks(res.data);
@@ -122,7 +129,7 @@ export default props => {
   };
 
   const getImage = () => {
-    switch (props.route.params.daysAhead) {
+    switch (route.params.daysAhead) {
       case 0:
         return todayImage;
       case 1:
@@ -135,7 +142,7 @@ export default props => {
   };
 
   const getColor = () => {
-    switch (props.route.params.daysAhead) {
+    switch (route.params.daysAhead) {
       case 0:
         return commonStyles.colors.today;
       case 1:
@@ -158,7 +165,7 @@ export default props => {
       />
       <ImageBackground source={getImage()} style={styles.background}>
         <View style={styles.iconBar}>
-          <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
+          <TouchableOpacity onPress={() => navigation.openDrawer()}>
             <Icon name="bars" size={20} color={commonStyles.colors.secondary} />
           </TouchableOpacity>
           <TouchableOpacity onPress={toggleShowDone}>
@@ -170,7 +177,7 @@ export default props => {
           </TouchableOpacity>
         </View>
         <View style={styles.titleBar}>
-          <Text style={styles.title}>{props.route.params.title}</Text>
+          <Text style={styles.title}>{route.params.title}</Text>
           <Text style={styles.subtitle}>{today}</Text>
         </View>
       </ImageBackground>
