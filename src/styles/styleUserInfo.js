@@ -34,4 +34,8 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 10,
   },
+  logoutIcon: {
+    marginLeft: 10,
+    marginBottom: 10,
+  },
 });
