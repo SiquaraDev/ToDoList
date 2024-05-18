@@ -7,8 +7,9 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import backgroundImage from '../assets/images/login.jpg';
 import {styles} from '../styles/styleAuth';
@@ -18,6 +19,8 @@ import {server, showError, showSuccess} from '../server/commonServer';
 import AuthInput from '../components/AuthInput';
 
 export default props => {
+  const navigation = useNavigation();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -78,7 +81,7 @@ export default props => {
         'authorization'
       ] = `bearer ${res.data.token}`;
 
-      props.navigation.navigate('Home');
+      navigation.navigate('Home', res.data);
       showSuccess('Access granted.');
       resetData();
     } catch (e) {
