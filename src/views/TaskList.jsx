@@ -19,6 +19,9 @@ import {styles} from '../styles/styleTaskList';
 import commonStyles from '../styles/commonStyles';
 
 import todayImage from '../assets/images/today.jpg';
+import tomorrowImage from '../assets/images/tomorrow.jpg';
+import weekImage from '../assets/images/week.jpg';
+import monthImage from '../assets/images/month.jpg';
 
 import Task from '../components/Task';
 import AddTask from './AddTask';
@@ -115,6 +118,32 @@ export default props => {
     }
   };
 
+  const getImage = () => {
+    switch (props.route.params.daysAhead) {
+      case 0:
+        return todayImage;
+      case 1:
+        return tomorrowImage;
+      case 7:
+        return weekImage;
+      default:
+        return monthImage;
+    }
+  };
+
+  const getColor = () => {
+    switch (props.route.params.daysAhead) {
+      case 0:
+        return commonStyles.colors.today;
+      case 1:
+        return commonStyles.colors.tomorrow;
+      case 7:
+        return commonStyles.colors.week;
+      default:
+        return commonStyles.colors.month;
+    }
+  };
+
   const today = moment().format('dddd, MMM Do');
 
   return (
@@ -124,7 +153,7 @@ export default props => {
         onCancel={() => setShowAddTask(false)}
         onSave={addTask}
       />
-      <ImageBackground source={todayImage} style={styles.background}>
+      <ImageBackground source={getImage()} style={styles.background}>
         <View style={styles.iconBar}>
           <TouchableOpacity onPress={() => props.navigation.openDrawer()}>
             <Icon name="bars" size={20} color={commonStyles.colors.secondary} />
@@ -152,7 +181,7 @@ export default props => {
         />
       </View>
       <TouchableOpacity
-        style={styles.addButton}
+        style={[styles.addButton, {backgroundColor: getColor()}]}
         activeOpacity={0.7}
         onPress={() => setShowAddTask(true)}>
         <Icon name="plus" size={20} color={commonStyles.colors.secondary} />
