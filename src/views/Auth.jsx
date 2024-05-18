@@ -85,7 +85,6 @@ export default props => {
       ] = `bearer ${res.data.token}`;
 
       navigation.navigate('Home', res.data);
-      showSuccess('Access granted.');
       resetData();
     } catch (e) {
       showError(e);
