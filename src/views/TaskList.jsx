@@ -1,5 +1,5 @@
 import React from 'react';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useCallback} from 'react';
 import {
   SafeAreaView,
   View,
@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -32,10 +33,12 @@ export default props => {
   const [visibleTasks, setVisibleTasks] = useState([]);
   const [showAddTask, setShowAddTask] = useState(false);
 
-  useEffect(() => {
-    getShowDone();
-    loadTasks();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadTasks();
+      getShowDone();
+    }, []),
+  );
 
   useEffect(() => {
     filterTasks();
