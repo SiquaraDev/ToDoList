@@ -8,8 +8,10 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import backgroundImage from '../assets/images/login.jpg';
 import {styles} from '../styles/styleAuth';
@@ -77,6 +79,7 @@ export default props => {
         password: password,
       });
 
+      await AsyncStorage.setItem('userData', JSON.stringify(res.data));
       axios.defaults.headers.common[
         'authorization'
       ] = `bearer ${res.data.token}`;
